@@ -6,35 +6,34 @@ import os
 import zipfile
 import re
 
-zip_path = 'c:\\Winc\\files\\data.zip'
-cache_dir_path = 'c:\\Winc\\files\\cache'
+base_path = os.getcwd()
+
+zip_path = os.path.join(base_path, 'files', 'data.zip')
+cache_dir_path = os.path.join(base_path, 'files', 'cache')
 
 
 def clean_cache():
 
-    if not os.path.exists(cache_dir_path):
-        os.makedirs(cache_dir_path)
-    for f in os.listdir(cache_dir_path):
-        os.remove(os.path.join(cache_dir_path, f))
-    return ''
+    if os.path.isdir(cache_dir_path):
+        for f in os.listdir(cache_dir_path):
+            file_path = os.path.join(cache_dir_path, f)
+            if os.path.isdir(file_path):
+                os.rmdir(file_path)
+            else:
+                os.remove(file_path)
+    else:
+        os.mkdir(cache_dir_path)
 
 
 def cache_zip(zip_path, cache_dir_path):
 
-    if not os.path.exists(cache_dir_path):
-        os.makedirs(cache_dir_path)
-
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(cache_dir_path)
-    return ''
 
 
 def cached_files():
-    cache_dir_path = os.path.abspath(os.path.join(
-        'C:\\', 'Winc', 'files', 'cache'))
+
     file_names = os.listdir(cache_dir_path)
-    file_names = [f for f in file_names if os.path.isfile(
-        os.path.join(cache_dir_path, f))]
     file_paths = [os.path.join(cache_dir_path, f) for f in file_names]
     return file_paths
 
